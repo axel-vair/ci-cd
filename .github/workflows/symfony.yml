@@ -21,7 +21,7 @@ jobs:
       - name: Checkout safebase code
         uses: actions/checkout@v4
         with:
-          repository: mon-nom/safebase  # Remplacez par le bon nom de votre dépôt
+          repository: axel-vair/safebase  # Remplacez par le bon nom de votre dépôt
           path: safebase  # Cloner dans un sous-dossier appelé "safebase"
 
       - name: List files in safebase for debugging
