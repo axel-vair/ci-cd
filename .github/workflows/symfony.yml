@@ -65,10 +65,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./safebase
+          context: ./safebase/docker
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:latest 
             ghcr.io/${{ github.repository }}:${{ github.sha }}
 
       - name: Send notification to Google Chat
@@ -79,24 +79,3 @@ jobs:
           jobStatus: ${{ job.status }}
           title: 'CI/CD Notification'
           subtitle: 'Safebase Tests'
-          createDefaultSection: true
-          additionalSections: |
-            [
-              {
-                "header": "Commit Information",
-                "widgets": [
-                  {
-                    "textParagraph": {
-                      "text": "Commit: ${{ github.sha }}"
-                    }
-                  },
-                  {
-                    "textParagraph": {
-                      "text": "${{ job.status == 'failure' && 'Reason: Check the logs for more details' || '' }}"
-                    }
-                  }
-                ]
-              }
-            ]
-          collapsibleDefaultSection: true
-          uncollapsibleWidgetsCount: 4
