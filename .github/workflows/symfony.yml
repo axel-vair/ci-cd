@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: List files for debugging
-        run: ls -la ./
+        run: ls -la ./safebase
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -29,18 +29,19 @@ jobs:
       - name: Cache Composer packages
         uses: actions/cache@v3
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          path: safebase/vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('safebase/**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
         run: |
-          cd safebase  
+          cd safebase
           composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Create Database
         run: |
+          cd safebase
           mkdir -p data
           touch data/database.sqlite
 
@@ -48,6 +49,7 @@ jobs:
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
         run: |
+          cd safebase
           vendor/bin/phpunit
 
       - name: Set up Docker Buildx
