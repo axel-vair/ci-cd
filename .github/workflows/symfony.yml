@@ -12,11 +12,20 @@ jobs:
   symfony-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout ci-cd code
         uses: actions/checkout@v4
 
-      - name: List files after checkout
-        run: ls -la ./  # Lister les fichiers à la racine
+      - name: List files in ci-cd
+        run: ls -la ./
+
+      - name: Checkout safebase code
+        uses: actions/checkout@v4
+        with:
+          repository: <votre-utilisateur>/<safebase-repo>
+          path: safebase  # Cloner dans un sous-dossier appelé "safebase"
+
+      - name: List files in safebase for debugging
+        run: ls -la ./safebase
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
