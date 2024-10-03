@@ -11,6 +11,10 @@ jobs:
   symfony-tests:
     runs-on: ubuntu-latest
     steps:
+      - # Récupère le code
+      - name: Checkout code
+      - uses: actions/checkout@v4
+
       # Configurer PHP
       - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
         with:
@@ -57,3 +61,15 @@ jobs:
         run: |
           cd safebase
           vendor/bin/phpunit
+
+      # Envoyer une notification google chat
+        -name: Send notification to Google Chat
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Pipeline ${{ job.status }}
+            Commit: ${{ github.sha }}
+            ${{ job.status == 'failure' && 'Reason: Check the logs for more details' || '' }}
+          webhook_url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
