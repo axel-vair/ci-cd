@@ -65,13 +65,12 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./docker
-          file: Dockerfile
+          context: ./docker  # Dossier contenant le Dockerfile
+          file: Dockerfile    # Nom du Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest 
             ghcr.io/${{ github.repository }}:${{ github.sha }}
-      
 
       - name: Send notification to Google Chat
         if: always()
