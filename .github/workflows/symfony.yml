@@ -18,6 +18,10 @@ jobs:
           repository: axel-vair/safebase
           path: safebase
 
+      - name: List files for debugging
+        run: |
+          ls -R ./safebase
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -65,7 +69,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./safebase/docker/
+          context: ./safebase
           file: Dockerfile
           push: true
           tags: |
