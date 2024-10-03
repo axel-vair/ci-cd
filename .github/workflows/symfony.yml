@@ -21,7 +21,7 @@ jobs:
       - name: Checkout safebase code
         uses: actions/checkout@v4
         with:
-          repository: axel-vair/safebase  # Remplacez par le bon nom de votre dépôt
+          repository: axel-vair/safebase
           path: safebase  # Cloner dans un sous-dossier appelé "safebase"
 
       - name: List files in safebase for debugging
@@ -74,8 +74,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./
-          file: Dockerfile
+          context: ./safebase  # Chemin vers le répertoire où se trouvent le Dockerfile et composer.json
+          file: ./safebase/Dockerfile  # Spécifiez le chemin complet vers le Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest 
