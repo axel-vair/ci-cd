@@ -71,8 +71,23 @@ jobs:
           webhookUrl: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
           jobStatus: ${{ job.status }}
           title: 'CI/CD Notification'
-          subtitle: 'Symfony Tests'
-          text: |
-            Pipeline ${{ job.status }}
-            Commit: ${{ github.sha }}
-            ${{ job.status == 'failure' && 'Reason: Check the logs for more details' || '' }}
+          subtitle: 'Safebase Tests'
+          createDefaultSection: true
+          additionalSections: |
+            [
+              {
+                "header": "Commit Information",
+                "widgets": [
+                  {
+                    "textParagraph": {
+                      "text": "Commit: ${{ github.sha }}"
+                    }
+                  },
+                  {
+                    "textParagraph": {
+                      "text": "${{ job.status == 'failure' && 'Reason: Check the logs for more details' || '' }}"
+                    }
+                  }
+                ]
+              }
+            ]
