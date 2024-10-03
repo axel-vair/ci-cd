@@ -1,61 +1,50 @@
-name: Symfony
+name: Symfony CI/CD
 
 on:
   repository_dispatch:
-    types: [trigger-cd]  # Événement pour déclencher ce workflow depuis safebase
+    types: [trigger-cd]
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   symfony-tests:
     runs-on: ubuntu-latest
     steps:
-      # Récupère le code
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Configurer PHP
-      - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
-        with:
-          php-version: '8.2'
-
-      # Vérifier le code de safebase
-      - name: Checkout safebase code
         uses: actions/checkout@v4
         with:
           repository: axel-vair/safebase
-          path: safebase  # Code sera dans le dossier 'safebase'
+          path: safebase
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
 
-      # Copier le fichier .env
       - name: Copy .env.test.local
         run: php -r "file_exists('safebase/.env.test.local') || copy('safebase/.env.test', 'safebase/.env.test.local');"
 
-      # Mettre en cache les dépendances Composer
       - name: Cache Composer packages
-        id: composer-cache
         uses: actions/cache@v3
         with:
-          path: safebase/vendor  # Spécifie le chemin du cache
+          path: safebase/vendor
           key: ${{ runner.os }}-php-${{ hashFiles('safebase/**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
 
-      # Installer les dépendances
       - name: Install Dependencies
         run: |
           cd safebase
           composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      # Créer la base de données
       - name: Create Database
         run: |
           cd safebase
           mkdir -p data
           touch data/database.sqlite
 
-      # Exécuter les tests via PHPUnit
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
@@ -63,7 +52,25 @@ jobs:
           cd safebase
           vendor/bin/phpunit
 
-      # Envoyer une notification Google Chat
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./safebase/Docker
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+
       - name: Send notification to Google Chat
         if: always()
         uses: SimonScholz/google-chat-action@main
