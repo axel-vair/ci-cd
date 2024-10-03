@@ -36,6 +36,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          cd safebase  
           composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Create Database
