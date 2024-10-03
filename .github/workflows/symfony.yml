@@ -63,11 +63,16 @@ jobs:
           cd safebase
           vendor/bin/phpunit
 
-            # Envoyer une notification Google Chat
+      # Envoyer une notification Google Chat
       - name: Send notification to Google Chat
         if: always()
-        uses: co-cddo/google-chat-notification@main
+        uses: SimonScholz/google-chat-action@main
         with:
-          name: CI/CD Notification
-          url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
-          status: ${{ job.status }}
+          webhookUrl: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          jobStatus: ${{ job.status }}
+          title: 'CI/CD Notification'
+          subtitle: 'Symfony Tests'
+          text: |
+            Pipeline ${{ job.status }}
+            Commit: ${{ github.sha }}
+            ${{ job.status == 'failure' && 'Reason: Check the logs for more details' || '' }}
