@@ -24,28 +24,33 @@ jobs:
           php-version: '8.2'
 
       - name: Copy .env.test.local
-        run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+        run: php -r "file_exists('safebase/.env.test.local') || copy('safebase/.env.test', 'safebase/.env.test.local');"
 
       - name: Cache Composer packages
         uses: actions/cache@v3
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          path: safebase/vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('safebase/**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
-        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: |
+          cd safebase
+          composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Create Database
         run: |
+          cd safebase
           mkdir -p data
           touch data/database.sqlite
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-        run: vendor/bin/phpunit
+        run: |
+          cd safebase
+          vendor/bin/phpunit
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
