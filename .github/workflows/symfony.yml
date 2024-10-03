@@ -29,19 +29,17 @@ jobs:
       - name: Cache Composer packages
         uses: actions/cache@v3
         with:
-          path: safebase/vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('safebase/**/composer.lock') }}
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
         run: |
-          cd safebase
           composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Create Database
         run: |
-          cd safebase
           mkdir -p data
           touch data/database.sqlite
 
@@ -49,7 +47,6 @@ jobs:
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
         run: |
-          cd safebase
           vendor/bin/phpunit
 
       - name: Set up Docker Buildx
