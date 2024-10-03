@@ -14,12 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          repository: axel-vair/safebase
-          path: safebase
 
       - name: List files for debugging
-        run: ls -la ./safebase  # Liste des fichiers dans le répertoire safebase
+        run: ls -la ./
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -27,33 +24,28 @@ jobs:
           php-version: '8.2'
 
       - name: Copy .env.test.local
-        run: php -r "file_exists('safebase/.env.test.local') || copy('safebase/.env.test', 'safebase/.env.test.local');"
+        run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
 
       - name: Cache Composer packages
         uses: actions/cache@v3
         with:
-          path: safebase/vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('safebase/**/composer.lock') }}
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
 
       - name: Install Dependencies
-        run: |
-          cd safebase
-          composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Create Database
         run: |
-          cd safebase
           mkdir -p data
           touch data/database.sqlite
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-        run: |
-          cd safebase
-          vendor/bin/phpunit
+        run: vendor/bin/phpunit
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -65,13 +57,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: List files for debugging at the root
-        run: ls -la ./  # Liste des fichiers à la racine du projet
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./safebase
+          context: ./
           file: Dockerfile
           push: true
           tags: |
