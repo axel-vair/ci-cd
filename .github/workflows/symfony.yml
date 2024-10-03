@@ -15,8 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: List files for debugging
-        run: ls -la ./safebase
+      - name: List files after checkout
+        run: ls -la ./  # Lister les fichiers à la racine
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
