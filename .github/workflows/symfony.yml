@@ -65,11 +65,13 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./safebase  # pointer vers le bon dossier contenant composer.json et docker/
+          context: ./docker
+          file: Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest 
             ghcr.io/${{ github.repository }}:${{ github.sha }}
+      
 
       - name: Send notification to Google Chat
         if: always()
