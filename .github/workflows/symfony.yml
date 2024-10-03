@@ -91,3 +91,5 @@ jobs:
                 ]
               }
             ]
+          collapsibleDefaultSection: true
+          uncollapsibleWidgetsCount: 4
