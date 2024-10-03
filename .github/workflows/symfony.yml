@@ -11,21 +11,22 @@ jobs:
   symfony-tests:
     runs-on: ubuntu-latest
     steps:
-      - # Récupère le code
+      # Récupère le code
       - name: Checkout code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       # Configurer PHP
       - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
         with:
           php-version: '8.2'
-      
+
       # Vérifier le code de safebase
       - name: Checkout safebase code
         uses: actions/checkout@v4
         with:
-          repository: axel-vair/safebase  
+          repository: axel-vair/safebase
           path: safebase  # Code sera dans le dossier 'safebase'
+
 
       # Copier le fichier .env
       - name: Copy .env.test.local
