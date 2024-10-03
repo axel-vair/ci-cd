@@ -65,8 +65,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./docker  # Dossier contenant le Dockerfile
-          file: Dockerfile    # Nom du Dockerfile
+          context: ./safebase/docker  # Modifié pour pointer vers le dossier docker
+          file: Dockerfile              # Nom du Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest 
