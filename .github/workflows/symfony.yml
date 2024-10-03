@@ -19,8 +19,7 @@ jobs:
           path: safebase
 
       - name: List files for debugging
-        run: |
-          ls -R ./safebase
+        run: ls -la ./safebase  # Liste des fichiers dans le répertoire safebase
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -66,10 +65,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: List files for debugging at the root
+        run: ls -la ./  # Liste des fichiers à la racine du projet
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./
+          context: ./safebase
           file: Dockerfile
           push: true
           tags: |
