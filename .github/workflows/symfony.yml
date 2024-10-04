@@ -101,8 +101,8 @@ jobs:
           file: ./safebase/Dockerfile
           push: true
           tags: |
-            your_dockerhub_username/your_image_name:${{ env.tag }} # Utilise le tag déterminé ci-dessus
-            your_dockerhub_username/your_image_name:latest # Pour l'image de développement
+            githull/safebase:${{ env.tag }} 
+            githull/safebase:latest 
 
       - name: Send notification to Google Chat
         if: always()
