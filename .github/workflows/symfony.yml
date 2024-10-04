@@ -61,13 +61,17 @@ jobs:
           cd safebase
           vendor/bin/phpunit
 
+      # Configuration de Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       # Job pour Build et Push de l'image Docker
       - name: Build and Push Docker Image
         if: success()  # Exécute ce job seulement si les tests passent
         uses: docker/build-push-action@v5
         with:
-          context: ./safebase  # Chemin vers le répertoire avec le Dockerfile
-          file: ./safebase/Dockerfile  # Chemin complet vers le Dockerfile
+          context: ./safebase
+          file: ./safebase/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest
