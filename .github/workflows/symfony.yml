@@ -1,8 +1,11 @@
 name: Symfony CI/CD
 
 on:
-  repository_dispatch:
-    types: [trigger-cd]
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
 
 permissions:
   contents: read
@@ -89,8 +92,8 @@ jobs:
           file: ./safebase/Dockerfile
           push: true
           tags: |
-            githull/safebase-image:latest
-            githull/safebase-image:${{ github.sha }}
+            your_dockerhub_username/your_image_name:${{ github.ref }}
+            your_dockerhub_username/your_image_name:latest 
 
       - name: Send notification to Google Chat
         if: always()
