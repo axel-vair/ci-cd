@@ -68,8 +68,6 @@ jobs:
     permissions:
       packages: write
       contents: read
-      attestations: write
-      id-token: write
 
     steps:
       - name: Checkout safebase code
@@ -91,8 +89,8 @@ jobs:
           file: ./safebase/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            githull/safebase-image:latest
+            githull/safebase-image:${{ github.sha }}
 
       - name: Send notification to Google Chat
         if: always()
