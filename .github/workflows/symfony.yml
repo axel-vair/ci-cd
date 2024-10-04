@@ -85,6 +85,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Determine image tag
+        id: vars
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          elif [[ $GITHUB_REF == refs/heads/* ]]; then
+            echo "tag=latest" >> $GITHUB_ENV
+          fi
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -92,8 +101,8 @@ jobs:
           file: ./safebase/Dockerfile
           push: true
           tags: |
-            your_dockerhub_username/your_image_name:${{ github.ref }}
-            your_dockerhub_username/your_image_name:latest 
+            your_dockerhub_username/your_image_name:${{ env.tag }} # Utilise le tag déterminé ci-dessus
+            your_dockerhub_username/your_image_name:latest # Pour l'image de développement
 
       - name: Send notification to Google Chat
         if: always()
