@@ -1,11 +1,8 @@
 name: Symfony CI/CD
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - '*'
+  repository_dispatch:
+    types: [trigger-cd]
 
 permissions:
   contents: read
