@@ -119,11 +119,13 @@ jobs:
         with:
           context: ./safebase
           file: ./safebase/Dockerfile
-          push: true
-          tags: |
-            githull/safebase:${{ env.tag }} 
-            githull/safebase:latest
-          platforms: linux/arm64,linux/amd64
+          run: |
+            docker buildx build \
+            --file ./safebase/Dockerfile \
+            --platform linux/arm64,linux/amd64 \
+            --tag githull/safebase:${{ env.tag }} \
+            --tag githull/safebase:latest \
+            --push 
 
       - name: Send notification to Google Chat
         if: always()  # S'assure que la notification est envoyée quel que soit l'état du job
