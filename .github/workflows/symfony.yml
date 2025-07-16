@@ -33,7 +33,7 @@ jobs:
         run: |
           cd safebase
           composer audit --format=json > audit_report.json || echo "Des vulnérabilités ont été détectées."
-        continue-on-error: true  # Ne pas échouer même en cas de vulnérabilités
+        continue-on-error: true
 
       - name: Check for vulnerabilities
         id: check_vulns
@@ -102,9 +102,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Print GITHUB_REF
-        run: echo "GITHUB_REF is $GITHUB_REF"
-
       - name: Determine image tag
         id: vars
         run: |
@@ -129,9 +126,9 @@ jobs:
             githull/safebase:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          
+
       - name: Send notification to Google Chat
-        if: always()  # S'assure que la notification est envoyée quel que soit l'état du job
+        if: always()
         uses: SimonScholz/google-chat-action@main
         with:
           webhookUrl: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
