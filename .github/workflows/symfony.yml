@@ -113,20 +113,18 @@ jobs:
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
             echo "tag=latest" >> $GITHUB_ENV
           fi
-
+          
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./safebase
           file: ./safebase/Dockerfile
-          run: |
-            docker buildx build \
-            --file ./safebase/Dockerfile \
-            --platform linux/arm64,linux/amd64 \
-            --tag githull/safebase:${{ env.tag }} \
-            --tag githull/safebase:latest \
-            --push 
-
+          platforms: linux/arm64,linux/amd64
+          tags: |
+            githull/safebase:${{ env.tag }}
+            githull/safebase:latest
+          push: true
+          
       - name: Send notification to Google Chat
         if: always()  # S'assure que la notification est envoyée quel que soit l'état du job
         uses: SimonScholz/google-chat-action@main
