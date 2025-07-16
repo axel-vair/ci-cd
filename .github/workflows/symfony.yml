@@ -28,31 +28,26 @@ jobs:
           cd safebase
           composer install --no-interaction
 
-      - name: Install PHP & Composer
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Install dependencies
-        run: |
-          cd safebase
-          composer install --no-interaction
-
       - name: Audit Composer packages
         id: audit
         run: | 
           cd safebase
-          composer audit --format=json > audit_report.json || echo "Des vulnérabilités ont été détectées."
+          composer audit --format=json > audit_report.json || (echo "Des vulnérabilités ont été détectées." && exit 1)
 
       - name: Check for vulnerabilities
         id: check_vulns
         run: |
-          if grep -q '"vulnerabilities": \[' audit_report.json; then
-            echo "Vulnérabilités détectées"
-            echo "true" >> $GITHUB_ENV
+          if [ -f "safebase/audit_report.json" ]; then
+            if grep -q '"vulnerabilities": \[' safebase/audit_report.json; then
+              echo "Vulnérabilités détectées"
+              echo "VULNERABILITIES=true" >> $GITHUB_ENV
+            else
+              echo "Aucune vulnérabilité détectée"
+              echo "VULNERABILITIES=false" >> $GITHUB_ENV
+            fi
           else
-            echo "Aucune vulnérabilité détectée"
-            echo "false" >> $GITHUB_ENV
+            echo "Le fichier audit_report.json est introuvable."
+            echo "VULNERABILITIES=false" >> $GITHUB_ENV
           fi
 
       - name: Mise à jour des dépendances
@@ -72,7 +67,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
-    
       - name: Create Database
         run: |
           cd safebase
