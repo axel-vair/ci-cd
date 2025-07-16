@@ -51,7 +51,7 @@ jobs:
             echo "VULNERABILITIES=false" >> $GITHUB_ENV
           fi
 
-      - name: Mise à jour des dépendances
+      - name: Update dependancies
         if: env.VULNERABILITIES == 'true'
         run: |
           cd safebase
