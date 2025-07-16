@@ -115,12 +115,6 @@ jobs:
           fi
 
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -131,6 +125,8 @@ jobs:
           tags: |
             githull/safebase:${{ env.tag }}
             githull/safebase:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           
       - name: Send notification to Google Chat
         if: always()  # S'assure que la notification est envoyée quel que soit l'état du job
