@@ -28,18 +28,38 @@ jobs:
           cd safebase
           composer install --no-interaction
 
+      - name: Install PHP & Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install dependencies
+        run: |
+          cd safebase
+          composer install --no-interaction
+
       - name: Audit Composer packages
+        id: audit
         run: | 
-          cd safebase 
-          composer audit || echo "Des vulnérabilités ont été détectées."
+          cd safebase
+          composer audit --format=json > audit_report.json || echo "Des vulnérabilités ont été détectées."
 
-      - name: Install Docker CLI tools
+      - name: Check for vulnerabilities
+        id: check_vulns
         run: |
-          sudo apt-get update && sudo apt-get install -y docker.io
+          if grep -q '"vulnerabilities": \[' audit_report.json; then
+            echo "Vulnérabilités détectées"
+            echo "true" >> $GITHUB_ENV
+          else
+            echo "Aucune vulnérabilité détectée"
+            echo "false" >> $GITHUB_ENV
+          fi
 
-      - name: Docker Scan (optional if enabled)
+      - name: Mise à jour des dépendances
+        if: env.VULNERABILITIES == 'true'
         run: |
-          docker scan safebase || echo "Aucun scanner Docker n'est disponible."
+          cd safebase
+          composer update --with-all-dependencies --no-interaction
 
       - name: Copy .env.test.local
         run: php -r "file_exists('safebase/.env.test.local') || copy('safebase/.env.test', 'safebase/.env.test.local');"
