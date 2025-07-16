@@ -12,25 +12,34 @@ jobs:
   symfony-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ci-cd code
-        uses: actions/checkout@v4
-
-      - name: List files in ci-cd
-        run: ls -la ./
-
-      - name: Checkout safebase code
+      - name: Checkout safebase
         uses: actions/checkout@v4
         with:
           repository: axel-vair/safebase
           path: safebase
 
-      - name: List files in safebase for debugging
-        run: ls -la ./safebase
-
-      - name: Setup PHP
+      - name: Install PHP & Composer
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+
+      - name: Install dependencies
+        run: |
+          cd safebase
+          composer install --no-interaction
+
+      - name: Audit Composer packages
+        run: | 
+          cd safebase 
+          composer audit || echo "Des vulnérabilités ont été détectées."
+
+      - name: Install Docker CLI tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y docker.io
+
+      - name: Docker Scan (optional if enabled)
+        run: |
+          docker scan safebase || echo "Aucun scanner Docker n'est disponible."
 
       - name: Copy .env.test.local
         run: php -r "file_exists('safebase/.env.test.local') || copy('safebase/.env.test', 'safebase/.env.test.local');"
@@ -43,11 +52,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
-      - name: Install Dependencies
-        run: |
-          cd safebase
-          composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
+    
       - name: Create Database
         run: |
           cd safebase
