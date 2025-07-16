@@ -21,12 +21,12 @@ jobs:
       - name: Install PHP & Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
 
       - name: Install dependencies
         run: |
           cd safebase
-          composer install --no-interaction
+          composer install --no-interaction --no-progress --prefer-dist
 
       - name: Audit Composer packages
         id: audit
@@ -95,6 +95,9 @@ jobs:
         with:
           repository: axel-vair/safebase
           path: safebase
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3  # Configure QEMU pour les builds multi-arch
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
