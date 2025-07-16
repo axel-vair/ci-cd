@@ -123,6 +123,7 @@ jobs:
           tags: |
             githull/safebase:${{ env.tag }} 
             githull/safebase:latest 
+          platforms: linux/arm64
 
       - name: Send notification to Google Chat
         if: always()  # S'assure que la notification est envoyée quel que soit l'état du job
