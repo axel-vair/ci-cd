@@ -1,12 +1,12 @@
 # DEPLOY.md
 
-## 📦 Déploiement de l'application Safebase avec GitHub Actions
+## Déploiement de l'application Safebase avec GitHub Actions
 
-Ce document décrit la procédure de déploiement de l'application Symfony `safebase` à l'aide d'une chaîne CI/CD définie dans GitHub Actions.
+Ce document décrit la procédure de déploiement de l'application Symfony `Safebase` à l'aide d'une chaîne CI/CD définie dans GitHub Actions.
 
 ---
 
-## 🧪 Étapes de CI/CD
+## Étapes de CI/CD
 
 ### 1. **Déclenchement automatique**
 
@@ -19,7 +19,7 @@ Un événement `repository_dispatch` est ensuite utilisé pour déclencher le wo
 ### 2. **Exécution des tests**
 
 Dans le dépôt `ci-cd` :
-- Clonage du projet `safebase`
+- Clonage du projet `Safebase`
 - Installation des dépendances PHP (via Composer)
 - Exécution des tests via PHPUnit
 
@@ -32,7 +32,7 @@ Les tests couvrent :
 ### 3. **Construction et publication de l’image Docker**
 
 Si les tests passent :
-- Construction de l’image Docker à partir du `Dockerfile` dans `safebase`
+- Construction de l’image Docker à partir du `Dockerfile` dans `Safebase`
 - Push de l’image vers [Docker Hub](https://hub.docker.com/)
   - Tag basé sur la branche ou le tag Git
   - Exemple : `githull/safebase:latest`
@@ -45,7 +45,7 @@ Une notification Google Chat est envoyée pour indiquer le succès ou l’échec
 
 ---
 
-## ⚙️ Secrets requis
+## Secrets requis
 
 Le pipeline utilise les secrets suivants :
 - `REPO_ACCESS_TOKEN` : Token pour accéder au dépôt distant
@@ -54,11 +54,10 @@ Le pipeline utilise les secrets suivants :
 
 ---
 
-## 🔐 Veille et sécurité
+## Veille et sécurité
 
 Un job de veille automatique est défini pour :
 - Vérifier les vulnérabilités Composer (`composer audit`)
-- Scanner l’image Docker (`docker scan`)
 
 ---
 
